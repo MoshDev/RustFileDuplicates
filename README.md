@@ -1,0 +1,2 @@
+# RustFileDuplicates
+Finds duplicated files 
