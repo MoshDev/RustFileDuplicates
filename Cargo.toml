@@ -1,0 +1,6 @@
+[package]
+name = "RustFileDuplicates"
+version = "0.1.0"
+authors = ["Mohammed Ersan <mosh_java@yahoo.com>"]
+
+[dependencies]
