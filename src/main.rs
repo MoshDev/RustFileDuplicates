@@ -1,3 +1,4 @@
+#[allow(non_snake_case)]
 use std::env;
 use std::fs;
 use std::vec::Vec;
@@ -6,11 +7,16 @@ use std::path::Path;
 use std::os::macos::fs::MetadataExt;
 
 fn main() {
+
     let dir_path = &find_arg_input_path();
+    if dir_path.eq("Missing Argument") {
+        panic!("Target Dir is missing");
+    }
+
     let dir = Path::new(dir_path);
     let files = list_dir_files(dir.to_path_buf());
     for _file in files {
-        println!("{:?} | {:?}", _file.file_name().unwrap(), _file.metadata().unwrap().st_size())
+        println!("{filename:?} | {filesize:?}", filename = _file.file_name().unwrap(), filesize = _file.metadata().unwrap().st_size());
     }
 }
 
