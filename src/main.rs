@@ -6,23 +6,17 @@ use std::path::PathBuf;
 use std::path::Path;
 use std::os::macos::fs::MetadataExt;
 
+mod files;
+
 fn main() {
-
-    let dir_path = &find_arg_input_path();
-    if dir_path.eq("Missing Argument") {
-        panic!("Target Dir is missing");
-    }
-
-    let dir = Path::new(dir_path);
-    let files = list_dir_files(dir.to_path_buf());
-    for _file in files {
-        println!("{filename:?} | {filesize:?}", filename = _file.file_name().unwrap(), filesize = _file.metadata().unwrap().st_size());
+    match find_arg_input_path() {
+        Some(input_path) => process_dir(input_path),
+        None => panic!("Target Dir is missing")
     }
 }
 
-pub fn find_arg_input_path() -> String {
-    let arg_input_path = env::args().nth(1).expect("Missing Argument");
-    return arg_input_path;
+pub fn find_arg_input_path() -> Option<String> {
+    return env::args().collect::<Vec<_>>().get(1).cloned();
 }
 
 fn list_dir_files(input_path: PathBuf) -> Vec<PathBuf> {
@@ -43,4 +37,18 @@ fn list_dir_files(input_path: PathBuf) -> Vec<PathBuf> {
         }
     }
     return result_files;
+}
+
+fn process_dir(input_path: String) -> () {
+    println!("{:?}", input_path);
+
+    let dir = Path::new(&input_path);
+    let dir_files = list_dir_files(dir.to_path_buf());
+    let mapped: Vec<files::FileInfo> = dir_files.iter().map(|p| files::FileInfo::new(p)).collect();
+    for _file in mapped {
+        println!("{filename:?} : {filesize:?}", filename = _file.file_name, filesize = _file.file_size);
+    }
+    //    for _file in dir_files {
+    //                println!("{filename:?} | {filesize:?}", filename = _file.file_name().unwrap(), filesize = _file.metadata().unwrap().st_size());
+    //    }
 }
